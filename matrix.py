@@ -138,7 +138,8 @@ def global_dp_edit(seq1,seq2, gap_penalty, score=default_score):
     # and thats it! we just return the two edited sequences and the total editded distance.
     # now the edit distance is just the number of differences between edited_seq1 edited_seq2
     dist = len([edited_seq1[i] for i,_ in enumerate(edited_seq1) if edited_seq1[i] != edited_seq2[i]])
-    return edited_seq1,edited_seq2,dist
+    #return edited_seq1,edited_seq2,dist
+    return dist
  
 
 

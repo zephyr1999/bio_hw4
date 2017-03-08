@@ -103,13 +103,13 @@ def main():
 
     #for every seq in the array go through and call global_dp_edit for 1 vs 2, 3 vs 4, until all seq have been delt with
     for i in range(0, len(array_of_seq)-1, 2):
-        seq1, seq2, edit_distance = global_dp_edit(array_of_seq[i], array_of_seq[i+1], gap_penalty)
+        edit_distance = global_dp_edit(array_of_seq[i], array_of_seq[i+1], gap_penalty)
         #created a variable to know how many = to print out i final output
-        number_equal_signs = len(seq1)
+        #number_equal_signs = len(seq1)
         #print   seq1
         #        seq2
         #        ===(#)
-        print seq1 ,'\n', seq2 ,'\n', '='*number_equal_signs+'('+str(edit_distance)+')'
+        #print seq1 ,'\n', seq2 ,'\n', '='*number_equal_signs+'('+str(edit_distance)+')'
         
     #create empty array    
     answer = []
@@ -117,24 +117,25 @@ def main():
     #and divide number of matches by th elength to get a similarity score. Put score in array for each seq in order
     for i in array_of_seq:
         for j in array_of_seq:
-            seq1, seq2, edit_distance = global_dp_edit(i, j, gap_penalty)
-            answer.append( round(float(edit_distance)/float(len(seq1)), 5) )
+            edit_distance = global_dp_edit(i, j, gap_penalty)
+            answer.append( edit_distance )
     
     
 
-    # length = len(array_of_seq)
+    length = len(array_of_seq)
     
     #np.array gets data ready to be a matrix
-    #data = np.array( answer )
+    data = np.array( answer )
     #shape of matrix 
-    #shape = ( length, length )
+    shape = ( length, length )
     #reshape matrix into the shpae we want number of seq by number of seq
-    #data2 = data.reshape( shape )
+    data2 = data.reshape( shape )
+    tri_upper_no_diag = np.triu(data2, k=1)
     
     
-    #print('\nAlignment Matrix')
+    print('\nDistance Matrix')
     #print out matrix with format to align and add zeros to form 5 decimal float with tabs
-    #print('\n'.join(['\t'.join(['{:<.5f}'.format(item) for item in row]) for row in data2]))
+    print('\n'.join(['\t'.join(['{:<.5f}'.format(item) for item in row]) for row in tri_upper_no_diag]))
 
             
 ################################################################################################################################
