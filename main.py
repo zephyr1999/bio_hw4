@@ -147,8 +147,9 @@ def main():
         while 0 in i:
             i.remove(0)
             
-    
+    print '\n'
     print UPGMA(new_array, array_of_seq_names )
+    print '\n'
             
 ################################################################################################################################
 # Have to use this line of code because our program needs to run with command line arguments
