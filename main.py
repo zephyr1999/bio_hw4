@@ -13,6 +13,7 @@ import argparse
 from os import path
 import numpy as np  #for dealing with matrix 
 from matrix import global_dp_edit
+from cluster import UPGMA
 
 # this is a global variable with 1's for mismatches and 0s for matches.
 #default_score = {}
@@ -96,10 +97,11 @@ def main():
    
     #open file and loop through parsing out and returning the sequences
     array_of_seq = []
+    array_of_seq_names = []
     with open(filepath) as f:
         for dna_sequence in parse_file(f): #runs in O(n) sinc 
             array_of_seq.append(dna_sequence[1])
-            
+            array_of_seq_names.append(dna_sequence[0])
 
     #for every seq in the array go through and call global_dp_edit for 1 vs 2, 3 vs 4, until all seq have been delt with
     for i in range(0, len(array_of_seq)-1, 2):
@@ -121,7 +123,7 @@ def main():
             answer.append( edit_distance )
     
     
-
+    
     length = len(array_of_seq)
     
     #np.array gets data ready to be a matrix
@@ -130,13 +132,23 @@ def main():
     shape = ( length, length )
     #reshape matrix into the shpae we want number of seq by number of seq
     data2 = data.reshape( shape )
-    tri_upper_no_diag = np.triu(data2, k=1)
-    
+    tri_lower_no_diag = np.tril(data2, k=0)
+
     
     print('\nDistance Matrix')
     #print out matrix with format to align and add zeros to form 5 decimal float with tabs
-    print('\n'.join(['\t'.join(['{:<.5f}'.format(item) for item in row]) for row in tri_upper_no_diag]))
+    print('\n'.join(['\t'.join(['{:<}'.format(item) for item in row]) for row in tri_lower_no_diag]))
 
+    np.array(tri_lower_no_diag)
+        
+    new_array = tri_lower_no_diag.tolist()
+
+    for i in new_array:
+        while 0 in i:
+            i.remove(0)
+            
+    
+    print UPGMA(new_array, array_of_seq_names )
             
 ################################################################################################################################
 # Have to use this line of code because our program needs to run with command line arguments
