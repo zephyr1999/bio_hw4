@@ -1,6 +1,6 @@
 # Homework 4
 # Erik Holbrook Jorge Benavides Cosima Jackson
-# test co
+
 ################################################################################################################################
 #    References:
 #    http://stackoverflow.com/questions/8568233/print-float-to-n-decimal-places-including-trailing-0s
@@ -26,13 +26,13 @@ from cluster import UPGMA
 
 ################################################################################################################################
 #    Usage function to help the user type in the correct command to run the file
-#    (e.g. python jorgebenavides_hw1.py -F <filename> 
 ################################################################################################################################
 
 def usage():
     
-    print '\npython jorgebenavides_hw2.py -F <filename> -L <size of k-mer> \n'
+    print '\npython hw4.py -F <filename>\n'
     print "where -F is the name of a FATSA format file to be read and analyzed"
+    print "where -G is the gap penalty you wish to implement"
 
 ################################################################################################################################
 #    parse_file function: this function is passed in the file_handler after being opened in a for loop. Sets two varibles to empty
@@ -69,7 +69,7 @@ def main():
     #create an instance of argument parser
     parse = argparse.ArgumentParser()
     
-    #add arguments to parser so if command line argumnet matches -f or -F or --filename it will take the next argument
+    #add arguments to parser so if command line argument matches -f or -F or --filename it will take the next argument
     #and put it into the --filename. See reference for more details on argparse.
     parse.add_argument('-F','-f', '--filename')
     parse.add_argument('-G','-g', '--gap')
@@ -115,7 +115,7 @@ def main():
         
     #create empty array    
     answer = []
-    #loop through list of seq and compare ever seq to eachother. Take the length of the seq returned
+    #loop through list of seq and compare every seq to eachother. Take the length of the seq returned
     #and divide number of matches by th elength to get a similarity score. Put score in array for each seq in order
     for i in array_of_seq:
         for j in array_of_seq:
