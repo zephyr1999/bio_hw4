@@ -54,10 +54,11 @@ def parse_file(file_handler):
                 yield (seq_name, ''.join(seq))
             #On first readline this function fails the if seq_name. writes name to seq_name and then fils in the seq by reading lines
             #up to the next >, loops back enters if '>' and returns seq_name and seq
-            seq_name = line 
+            seq_name1 = line.split() 
+            seq_name = seq_name1[0]
             seq = []
         else:
-            seq.append(line)
+            seq.append(line.rstrip().replace(" ", ""))
     if seq_name: 
         #Since I skip the first if statement to wait for the seq to get filled in I have to make one last call in order to get
         #the last seq_name and seq
@@ -113,42 +114,31 @@ def main():
         #        ===(#)
         #print seq1 ,'\n', seq2 ,'\n', '='*number_equal_signs+'('+str(edit_distance)+')'
         
-    #create empty array    
+    #create empty array
     answer = []
-    #loop through list of seq and compare every seq to eachother. Take the length of the seq returned
+    #loop through list of seq and compare ever seq to eachother. Take the length of the seq returned
     #and divide number of matches by th elength to get a similarity score. Put score in array for each seq in order
-    for i in array_of_seq:
-        for j in array_of_seq:
-            edit_distance = global_dp_edit(i, j, gap_penalty)
-            answer.append( edit_distance )
+    
+    for i in range(0, len(array_of_seq)):
+        answer2 = []
+        for j in range(i+1, len(array_of_seq)):
+            edit_distance = global_dp_edit(array_of_seq[i], array_of_seq[j], gap_penalty)
+            answer2.append( edit_distance )
+        answer.append(answer2)
+    
+    answer = answer[::-1]
     
     
     
-    length = len(array_of_seq)
-    
-    #np.array gets data ready to be a matrix
-    data = np.array( answer )
-    #shape of matrix 
-    shape = ( length, length )
-    #reshape matrix into the shpae we want number of seq by number of seq
-    data2 = data.reshape( shape )
-    tri_lower_no_diag = np.tril(data2, k=0)
 
     
     print('\nDistance Matrix')
     #print out matrix with format to align and add zeros to form 5 decimal float with tabs
-    print('\n'.join(['\t'.join(['{:<}'.format(item) for item in row]) for row in tri_lower_no_diag]))
+    print('\n'.join(['\t'.join(['{:<}'.format(item) for item in row]) for row in answer]))
 
-    np.array(tri_lower_no_diag)
-        
-    new_array = tri_lower_no_diag.tolist()
-
-    for i in new_array:
-        while 0 in i:
-            i.remove(0)
             
     print '\n'
-    print UPGMA(new_array, array_of_seq_names )
+    print UPGMA(answer, array_of_seq_names )
     print '\n'
             
 ################################################################################################################################
