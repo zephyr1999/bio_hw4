@@ -9,6 +9,7 @@ for c1 in 'ACTGU':
 
 
 def global_dp_edit(seq1,seq2, gap_penalty, score=default_score):
+
     # Parameters: seq1, seq2 -> sequences to be matched
     #   score -> scoring matrix for mismatches.
     #
