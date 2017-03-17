@@ -1,4 +1,7 @@
 from platform import node
+from cgitb import small
+
+list_of_smallest_clusters = []
 
 
 def new_distance(possible_clusters, dictionary_of_seq_compare_scores):
@@ -51,6 +54,8 @@ def build_dict_tree(smallest_distance_cluster_tuple, lowest_distance, node_dict)
     lowest_distance *= 0.5
     node_dict[new_node] = { 'left_child':left, 'right_child':right, 'dis_to_base':lowest_distance }
 
+    print 'new node', new_node
+    #listlist.append(new_node)
     
     #update dict_node with nodes creating parents and children
     #print new_node, node_dict[new_node]
@@ -68,6 +73,9 @@ def find_smallest_distance(list_of_possible_cluster_pairs, dictionary_of_seq_com
     
     #sort list of possible cluster with distances and pull out lowest one
     lowest_distance, smallest_distance_cluster = sorted(list_of_possible_cluster_pairs_with_distances)[0]
+    
+    list_of_smallest_clusters.append(smallest_distance_cluster)
+
     
     #build_dict_tree
     build_dict_tree(smallest_distance_cluster, lowest_distance , node_dict)
@@ -92,7 +100,7 @@ def UPGMA(dictionary_of_seq_compare_scores, list_of_compared_seqs):
         list_of_compared_seqs = find_smallest_distance(list_of_compared_seqs, dictionary_of_seq_compare_scores, node_dict)
    
     
-    return node_dict   
+    return node_dict, list_of_smallest_clusters
     
     
     

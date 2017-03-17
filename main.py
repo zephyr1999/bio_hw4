@@ -188,14 +188,37 @@ def main():
     list_of_compared_seqs = [(seq1,seq2) for pos,seq1 in pos_and_seq for seq2 in array_of_seq_names[pos+1:]]     
     #print list_of_compared_seqs
     #
-    node_dict = UPGMA(dictionary_of_seq_compare_scores, list_of_compared_seqs)
+    node_dict, list_of_smallest_clusters = UPGMA(dictionary_of_seq_compare_scores, list_of_compared_seqs)
     
 
-    print node_dict
+    print node_dict, '\n'
+    #listlist = listlist[::-1]
+    print list_of_smallest_clusters
+    count = 1
+    answer= ['']
 
-   
+    for smallest_distance_cluster in list_of_smallest_clusters:
     
+        
+        left_tuple = str(smallest_distance_cluster[0])
+        right_tuple = str(smallest_distance_cluster[1])
+        print left_tuple
     
+        if count == 1:
+            #answer[0] = answer[0] + left_tuple
+            if left_tuple not in answer[0] and right_tuple not in answer[0]:
+                answer[0] = "(" + left_tuple + "," + right_tuple + ")"
+                count += 1
+
+        elif (len(left_tuple) == 1):
+            answer[0] =  answer[0] + "(" + left_tuple + "," + right_tuple + ")"
+            count += 1
+        else:
+            if left_tuple not in answer[0] and right_tuple not in answer[0]:
+                answer[0] = "(" + answer[0] + "," + right_tuple + ")"
+                count += 1
+    print 'Newick is wrong :(', answer[0]
+    print 'Should be ((((A:8.5,B:8.5):2.5,E:11):5.5,(C:14,D:14):2.5)     '
     
     #print node_dict['ABCDE']
 
