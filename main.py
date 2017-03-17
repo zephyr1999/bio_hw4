@@ -13,15 +13,8 @@ import argparse
 from os import path
 import numpy as np  #for dealing with matrix 
 from matrix import global_dp_edit
-from cluster import UPGMA
+from cluster import run
 
-# this is a global variable with 1's for mismatches and 0s for matches.
-#default_score = {}
-#for c1 in 'ACTGU':
-#    default_score[c1]={}
-#    for c2 in 'ACTGU':
-#        if c1==c2: default_score[c1][c2]=1
-#        else: default_score[c1][c2]=-1
 
 
 ################################################################################################################################
@@ -64,9 +57,12 @@ def parse_file(file_handler):
         #Since I skip the first if statement to wait for the seq to get filled in I have to make one last call in order to get
         #the last seq_name and seq
         yield (seq_name, ''.join(seq).upper())
+        
+################################################################################################################################
+#    Main: Handle Passed in Arguments
+################################################################################################################################ 
 
 def main():
-
 
     #create an instance of argument parser
     parse = argparse.ArgumentParser()
@@ -94,9 +90,12 @@ def main():
     if(score_filename == None):
         usage()
         exit(2)
-       
         
-    #get absolute file path for filename    
+################################################################################################################################
+#    Main: Parse Score file into a dictionary inside dictionary representing the scores
+################################################################################################################################       
+        
+    #get absolute file path for filename and score_filename   
     filepath = path.abspath(filename)
     score_filepath = path.abspath(score_filename)
     
@@ -119,8 +118,6 @@ def main():
     answer = [item for sublist in keys for item in sublist]
     #print answer
 
-    #list_of_stuff = ["A","B","C","D"]
-    #numbers = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]
     dict1 = {}
     dict2 = {}
 
@@ -129,15 +126,11 @@ def main():
         for j in range(0, len(answer), 1):
             dict1[answer[j]] = int(new_r[i][j+1])
             dict2[answer[i]][answer[j]] = dict1[answer[j]]
+
+################################################################################################################################
+#    Main: Parse FASTA file into a array_of_seq_names and array_of_seq
+################################################################################################################################  
                                         
-
-
-    
-    #############################################################################################################################
-    #Still inside main, done with initial test. I call the parse_file generator in a for loop and it will yield back a seq
-    #on every iteration. The seq is put into and array_of_seq
-    #############################################################################################################################    
-   
     #open file and loop through parsing out and returning the sequences
     array_of_seq = []
     array_of_seq_names = []
@@ -146,32 +139,95 @@ def main():
             array_of_seq.append(dna_sequence[1])
             array_of_seq_names.append(dna_sequence[0])
 
-    answer = []
+    upper_tri_distance_matrix = []
+    
     #loop through list of seq and compare ever seq to eachother. Take the length of the seq returned
     #and divide number of matches by th elength to get a similarity score. Put score in array for each seq in order
     
     for i in range(0, len(array_of_seq)):
-        answer2 = []
+        row_in_distance_matrix = []
         for j in range(i+1, len(array_of_seq)):
             edit_distance = global_dp_edit(array_of_seq[i], array_of_seq[j], gap_penalty, dict2)
-            answer2.append( edit_distance )
-        answer.append(answer2)
+            row_in_distance_matrix.append( edit_distance )
+        upper_tri_distance_matrix.append(row_in_distance_matrix)
     
-    answer = answer[::-1]
-    
-    
-    
-
+    #reverse distance matrix so it is now in lower form
+    lower_tri_distance_matirx = upper_tri_distance_matrix[::-1]
     
     print('\nDistance Matrix')
-    #print out matrix with format to align and add zeros to form 5 decimal float with tabs
-    print('\n'.join(['\t'.join(['{:<}'.format(item) for item in row]) for row in answer]))
+    #print out matrix
+    print('\n'.join(['\t'.join(['{:<}'.format(item) for item in row]) for row in lower_tri_distance_matirx]))
 
-            
+    # np.array(tri_lower_no_diag)
+        
+    # new_array = tri_lower_no_diag.tolist()
+    '''
+    for i in new_array:
+        while 0 in i:
+            i.remove(0)
+    '''
+    print array_of_seq_names       
     print '\n'
-    print UPGMA(answer, array_of_seq_names)
+    #print UPGMA(answer, array_of_seq_names )
+    answer1= [[],[17],[21,30],[31,34,28],[23,21,39,43]]
+    array_of_seq_names = ['A','B','C','D','E']
+    #print UPGMA(test_matrix, name_seq )
     print '\n'
+    
+    dict1 = {}
+    dimen = len(array_of_seq_names)
+    
+    w, h = dimen, dimen;
+    Matrix = [[0 for x in range(w)] for y in range(h)]
+    
+    for i in range(len(array_of_seq_names)):
+        for j in range(i+1, len(array_of_seq_names)):
+    #        #print i, j
+            Matrix[i][j] = answer1[j][i]
             
+            
+    for i in range(len(array_of_seq_names)):
+        for j in range(i+1, len(array_of_seq_names)):
+    #       #print i, j
+            Matrix[j][i] = Matrix[i][j]
+    print Matrix
+    #Matrix = np.matrix(Matrix)
+    
+    listlist = []
+    
+    for i in range(0, len(array_of_seq_names), 1):
+        #dict2[labels[i]] = {}
+        for j in range(0, len(array_of_seq_names), 1):  
+            #x = "(" + labels[i] + "," + labels[j] + ")"
+            xx = (str(array_of_seq_names[i]) , str(array_of_seq_names[j]) )
+            #listlist.append(xx)
+            dict1[xx] = float(Matrix[i][j])
+            
+    eL = enumerate(array_of_seq_names)
+
+    LL = [(o1,o2) for i,o1 in eL for o2 in array_of_seq_names[i+1:]]     
+    
+    print dict1
+    print listlist
+    
+    node_dict = run(dict1,LL)
+    
+    print '***'
+    def f(k):  return len(k)
+    
+    L = sorted(node_dict.keys(),key=f)
+    print "lllllllll", L
+    for k in L[0:]:
+        print k,
+    print
+    print node_dict
+
+   
+    
+    
+    
+    print node_dict['ABCDE']
+
 ################################################################################################################################
 # Have to use this line of code because our program needs to run with command line arguments
 ################################################################################################################################
