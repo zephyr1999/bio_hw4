@@ -143,7 +143,7 @@ def main():
     
     #loop through list of seq and compare ever seq to eachother. Take the length of the seq returned
     #and divide number of matches by th elength to get a similarity score. Put score in array for each seq in order
-    
+    '''
     for i in range(0, len(array_of_seq)):
         row_in_distance_matrix = []
         for j in range(i+1, len(array_of_seq)):
@@ -153,73 +153,48 @@ def main():
     
     #reverse distance matrix so it is now in lower form
     lower_tri_distance_matirx = upper_tri_distance_matrix[::-1]
+    '''
     
-    print('\nDistance Matrix')
-    #print out matrix
-    print('\n'.join(['\t'.join(['{:<}'.format(item) for item in row]) for row in lower_tri_distance_matirx]))
-
-    # np.array(tri_lower_no_diag)
-        
-    # new_array = tri_lower_no_diag.tolist()
-    '''
-    for i in new_array:
-        while 0 in i:
-            i.remove(0)
-    '''
-    print array_of_seq_names       
-    print '\n'
-    #print UPGMA(answer, array_of_seq_names )
-    answer1= [[],[17],[21,30],[31,34,28],[23,21,39,43]]
+    ############FOR TESTING
+    lower_tri_distance_matirx = [[],[17],[21,30],[31,34,28],[23,21,39,43]]
     array_of_seq_names = ['A','B','C','D','E']
-    #print UPGMA(test_matrix, name_seq )
-    print '\n'
     
-    dict1 = {}
-    dimen = len(array_of_seq_names)
+    #create empty matrix size of # of seqs * # of seqs
+    number_of_seqs = len(array_of_seq_names)
+    w, h = number_of_seqs, number_of_seqs;
+    distance_Matrix = [[0 for x in range(w)] for y in range(h)]
     
-    w, h = dimen, dimen;
-    Matrix = [[0 for x in range(w)] for y in range(h)]
-    
-    for i in range(len(array_of_seq_names)):
-        for j in range(i+1, len(array_of_seq_names)):
-    #        #print i, j
-            Matrix[i][j] = answer1[j][i]
-            
-            
-    for i in range(len(array_of_seq_names)):
-        for j in range(i+1, len(array_of_seq_names)):
-    #       #print i, j
-            Matrix[j][i] = Matrix[i][j]
-    print Matrix
-    #Matrix = np.matrix(Matrix)
-    
-    listlist = []
-    
-    for i in range(0, len(array_of_seq_names), 1):
-        #dict2[labels[i]] = {}
-        for j in range(0, len(array_of_seq_names), 1):  
-            #x = "(" + labels[i] + "," + labels[j] + ")"
-            xx = (str(array_of_seq_names[i]) , str(array_of_seq_names[j]) )
-            #listlist.append(xx)
-            dict1[xx] = float(Matrix[i][j])
-            
-    eL = enumerate(array_of_seq_names)
+    #create full matrix for print by copying lower triangle to upper trangle of newly formed empty distance_matrix
+    for i in range(number_of_seqs):
+        for j in range(i+1, number_of_seqs):
+            distance_Matrix[i][j] = lower_tri_distance_matirx[j][i]
+            distance_Matrix[j][i] = distance_Matrix[i][j]
+             
+    print('\nDistance Matrix')
+    print('\n'.join(['\t'.join(['{:<}'.format(item) for item in row]) for row in distance_Matrix]) + '\n')      
 
-    LL = [(o1,o2) for i,o1 in eL for o2 in array_of_seq_names[i+1:]]     
     
-    print dict1
-    print listlist
+    dictionary_of_seq_compare_scores = {}
     
-    node_dict = run(dict1,LL)
+    #create dictionary of all seq comparison scroes
+    for i in range(0, number_of_seqs, 1):
+        for j in range(0, number_of_seqs, 1):  
+            xx = (str(array_of_seq_names[i]) , str(array_of_seq_names[j]) )
+            dictionary_of_seq_compare_scores[xx] = float(distance_Matrix[i][j])
+            
+    pos_and_seq = enumerate(array_of_seq_names)
+    list_of_compared_seqs = [(seq1,seq2) for pos,seq1 in pos_and_seq for seq2 in array_of_seq_names[pos+1:]]     
+
+    node_dict = run(dictionary_of_seq_compare_scores, list_of_compared_seqs)
     
-    print '***'
-    def f(k):  return len(k)
+    #print '***'
+    #def f(k):  return len(k)
     
-    L = sorted(node_dict.keys(),key=f)
-    print "lllllllll", L
-    for k in L[0:]:
-        print k,
-    print
+    #L = sorted(node_dict.keys(),key=f)
+    #print "lllllllll", L
+    #for k in L[0:]:
+    #    print k,
+    #print
     print node_dict
 
    
