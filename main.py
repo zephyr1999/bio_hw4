@@ -196,7 +196,15 @@ def main():
     print list_of_smallest_clusters
     count = 1
     answer= ['']
+    
+    length_of_list = len(list_of_smallest_clusters)
+    
+    print 'khsdjkfajkf', list_of_smallest_clusters
+    
+    list_of_smallest_clusters = list_of_smallest_clusters[:-1]
 
+    print 'khsdjkfajkf', list_of_smallest_clusters
+    
     for smallest_distance_cluster in list_of_smallest_clusters:
     
         
@@ -207,17 +215,17 @@ def main():
         if count == 1:
             #answer[0] = answer[0] + left_tuple
             if left_tuple not in answer[0] and right_tuple not in answer[0]:
-                answer[0] = "(" + left_tuple + "," + right_tuple + ")"
+                answer[0] = "(" + left_tuple + ":" + "," + right_tuple + ":" + ")"
                 count += 1
 
         elif (len(left_tuple) == 1):
-            answer[0] =  answer[0] + "(" + left_tuple + "," + right_tuple + ")"
+            answer[0] =  answer[0] + "(" + left_tuple + ":" + "," + right_tuple + ":" + ")"
             count += 1
         else:
             if left_tuple not in answer[0] and right_tuple not in answer[0]:
-                answer[0] = "(" + answer[0] + "," + right_tuple + ")"
+                answer[0] = "(" + answer[0] + "," + right_tuple + ":" + ")"
                 count += 1
-    print 'Newick is wrong :(', answer[0]
+    print 'Newick is wrong ', answer[0]
     print 'Should be ((((A:8.5,B:8.5):2.5,E:11):5.5,(C:14,D:14):2.5)     '
     
     #print node_dict['ABCDE']
