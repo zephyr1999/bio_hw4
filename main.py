@@ -58,6 +58,35 @@ def parse_file(file_handler):
         #the last seq_name and seq
         yield (seq_name, ''.join(seq).upper())
         
+def invert(dic, root):
+    if len(root)==1: 
+        return root
+    else:
+        return [[invert(dic,c),dic[c]['dis_to_par']] for c in dic.keys() if 'parent' in dic[c].keys() and dic[c]['parent']==root]
+
+def convert_to_string(l): 
+    # not done, still need to replace some commas with ':'
+    string = str(l).replace('[','(').replace(']',')').replace(', ', ':')
+    string = string.replace('):(', ',').replace('((', '(').replace('))', ')').replace('\'', '')
+    string = string + ';'
+    
+    return string
+
+    
+
+def convert_dict_to_string(d):
+    #find the longest element (root)
+    root_len = max([len(k) for k in d.keys()])
+
+    root = [k for k in d.keys() if len(k) == root_len][0]
+    
+    # get the intverted tree
+    tr = invert(d,root)
+
+    # make string
+    s = convert_to_string(tr)
+    return s
+        
 ################################################################################################################################
 #    Main: Handle Passed in Arguments
 ################################################################################################################################ 
@@ -143,7 +172,7 @@ def main():
     
     #loop through list of seq and compare ever seq to eachother. Take the length of the seq returned
     #and divide number of matches by th elength to get a similarity score. Put score in array for each seq in order
-    '''
+    
     for i in range(0, len(array_of_seq)):
         row_in_distance_matrix = []
         for j in range(i+1, len(array_of_seq)):
@@ -153,11 +182,11 @@ def main():
     
     #reverse distance matrix so it is now in lower form
     lower_tri_distance_matirx = upper_tri_distance_matrix[::-1]
-    '''
+    
     
     ############FOR TESTING
-    lower_tri_distance_matirx = [[],[17],[21,30],[31,34,28],[23,21,39,43]]
-    array_of_seq_names = ['A','B','C','D','E']
+    #lower_tri_distance_matirx = [[],[17],[21,30],[31,34,28],[23,21,39,43]]
+    #array_of_seq_names = ['A','B','C','D','E']
     
     #create empty matrix size of # of seqs * # of seqs
     number_of_seqs = len(array_of_seq_names)
@@ -188,47 +217,9 @@ def main():
     list_of_compared_seqs = [(seq1,seq2) for pos,seq1 in pos_and_seq for seq2 in array_of_seq_names[pos+1:]]     
     #print list_of_compared_seqs
     #
-    node_dict, list_of_smallest_clusters = UPGMA(dictionary_of_seq_compare_scores, list_of_compared_seqs)
+    node_dict = UPGMA(dictionary_of_seq_compare_scores, list_of_compared_seqs)
     
-
-    print node_dict, '\n'
-    #listlist = listlist[::-1]
-    print list_of_smallest_clusters
-    count = 1
-    answer= ['']
-    
-    length_of_list = len(list_of_smallest_clusters)
-    
-    print 'khsdjkfajkf', list_of_smallest_clusters
-    
-    list_of_smallest_clusters = list_of_smallest_clusters[:-1]
-
-    print 'khsdjkfajkf', list_of_smallest_clusters
-    
-    for smallest_distance_cluster in list_of_smallest_clusters:
-    
-        
-        left_tuple = str(smallest_distance_cluster[0])
-        right_tuple = str(smallest_distance_cluster[1])
-        print left_tuple
-    
-        if count == 1:
-            #answer[0] = answer[0] + left_tuple
-            if left_tuple not in answer[0] and right_tuple not in answer[0]:
-                answer[0] = "(" + left_tuple + ":" + "," + right_tuple + ":" + ")"
-                count += 1
-
-        elif (len(left_tuple) == 1):
-            answer[0] =  answer[0] + "(" + left_tuple + ":" + "," + right_tuple + ":" + ")"
-            count += 1
-        else:
-            if left_tuple not in answer[0] and right_tuple not in answer[0]:
-                answer[0] = "(" + answer[0] + "," + right_tuple + ":" + ")"
-                count += 1
-    print 'Newick is wrong ', answer[0]
-    print 'Should be ((((A:8.5,B:8.5):2.5,E:11):5.5,(C:14,D:14):2.5)     '
-    
-    #print node_dict['ABCDE']
+    print convert_dict_to_string(node_dict)
 
 ################################################################################################################################
 # Have to use this line of code because our program needs to run with command line arguments
