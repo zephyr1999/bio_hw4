@@ -186,7 +186,7 @@ def main():
     
     #create list of all seqs only compared to each other once non redundant
     list_of_compared_seqs = [(seq1,seq2) for pos,seq1 in pos_and_seq for seq2 in array_of_seq_names[pos+1:]]     
-
+    #print list_of_compared_seqs
     #
     node_dict = UPGMA(dictionary_of_seq_compare_scores, list_of_compared_seqs)
     
@@ -197,7 +197,7 @@ def main():
     
     
     
-    print node_dict['ABCDE']
+    #print node_dict['ABCDE']
 
 ################################################################################################################################
 # Have to use this line of code because our program needs to run with command line arguments
