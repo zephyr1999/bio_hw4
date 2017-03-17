@@ -13,7 +13,7 @@ import argparse
 from os import path
 import numpy as np  #for dealing with matrix 
 from matrix import global_dp_edit
-from cluster import run
+from cluster import UPGMA
 
 
 
@@ -183,18 +183,14 @@ def main():
             dictionary_of_seq_compare_scores[xx] = float(distance_Matrix[i][j])
             
     pos_and_seq = enumerate(array_of_seq_names)
+    
+    #create list of all seqs only compared to each other once non redundant
     list_of_compared_seqs = [(seq1,seq2) for pos,seq1 in pos_and_seq for seq2 in array_of_seq_names[pos+1:]]     
 
-    node_dict = run(dictionary_of_seq_compare_scores, list_of_compared_seqs)
+    #
+    node_dict = UPGMA(dictionary_of_seq_compare_scores, list_of_compared_seqs)
     
-    #print '***'
-    #def f(k):  return len(k)
-    
-    #L = sorted(node_dict.keys(),key=f)
-    #print "lllllllll", L
-    #for k in L[0:]:
-    #    print k,
-    #print
+
     print node_dict
 
    

@@ -1,22 +1,9 @@
-#import utils
 from platform import node
-
 import collections
+
 It = collections.Iterable
 
-'''
-letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-'''
 
-'''
-def load_data(fn,do_split=False):
-    FH = open(fn,'r')
-    data = FH.read().strip()
-    FH.close()
-    if do_split:
-        return data.split('\n')
-    return data
-'''
 
 def flatten(L):
     for e in L:
@@ -25,15 +12,6 @@ def flatten(L):
                 yield sub
         else:
             yield e
-
-'''
-def print_list(L, n=3):
-    while L:
-        for e in L[:n]:
-            print 'dsfjaskfhnljkasfhldjsasfkjsalfdjskahjklf', e,
-            print
-            L = L[n:]
-            '''
 
 def list_elements(t, sort_them=True):
     return sorted(list(flatten(t)))
@@ -108,96 +86,48 @@ def save_node_data(t,d,node_dict,debug=False):
     #print str(node_dict['left'])
     #print 'testestest', labels[0]
 
-def one_round(L,D,node_dict,debug=False):
-    # find the pair of nodes with the smallest distance
-    temp = [(D[k],k) for k in L]
+def one_round(list_of_possible_cluster_pairs, dictionary_of_seq_compare_scores, node_dict):
+    # create list of tuples of all possible clusters with distance by calling dictionary with clusters
+    list_of_possible_cluster_pairs_with_distances = [(dictionary_of_seq_compare_scores[cluster],cluster) for cluster in list_of_possible_cluster_pairs]
     
-    print 'temp', temp
-    lowest_labels,lowest_distance = sorted(temp)[0]
-    #print 'lowest labels' , lowest_distance
+    #sort list of possible cluster with distances and pull out lowest one
+    lowest_distance, smallest_distance_cluster = sorted(list_of_possible_cluster_pairs_with_distances)[0]
+    
     listlistlist.append(lowest_distance)
-    #if debug:
-    #    print 'closest:'
-    #print lowest_distance, lowest_distance
-    save_node_data(lowest_distance,lowest_labels,node_dict,debug=debug)
-    # collapse the list
-    rL = sorted(collapse(L,lowest_distance))
-    #if debug:
-    #    print 'elements after joining:'
-    #    utils.print_list(rL,n=1)
-    # calculate cluster distances
-    for lowest_distance in rL:
-        if not lowest_distance in D:
-            D[lowest_distance] = average_distance(lowest_distance,D,debug=debug)
-    #print 'stuff', rL, t
-    #print D
-    return rL,lowest_distance
+
+    save_node_data(smallest_distance_cluster, lowest_distance , node_dict)
+    
+    # create new list that replaced the seqs that were clustered as one
+    new_list_of_possible_cluster_pairs = sorted(collapse(list_of_possible_cluster_pairs, smallest_distance_cluster))
+
+
+    # update dictionary with the new cluster and calculate the new distance between other possible clusters
+    for possible_clusters in new_list_of_possible_cluster_pairs:
+        if possible_clusters not in dictionary_of_seq_compare_scores:
+            dictionary_of_seq_compare_scores[possible_clusters] = average_distance(possible_clusters,dictionary_of_seq_compare_scores)
+ 
+    return new_list_of_possible_cluster_pairs
     
 
-#def run(fn,debug=False):
-    #D,L = get_data_dict(fn,debug=debug)
-def run(D,L, debug= False):
-    print 'DDDDDDDDDDDD',D
-    
+def UPGMA(dictionary_of_seq_compare_scores, list_of_compared_seqs):
 
-    #D = {('B', 'A'): 17.0, ('D', 'E'): 43.0, ('C', 'D'): 28.0, ('A', 'B'): 17.0, ('E', 'A'): 23.0, ('B', 'B'): 0.0, ('E', 'E'): 0.0, ('D', 'A'): 31.0, ('C', 'C'): 0.0, ('D', 'B'): 34.0, ('B', 'C'): 30.0, ('A', 'A'): 0.0, ('E', 'D'): 43.0, ('A', 'E'): 23.0, ('A', 'D'): 31.0, ('E', 'C'): 39.0, ('B', 'D'): 34.0, ('D', 'D'): 0.0, ('B', 'E'): 21.0, ('A', 'C'): 21.0, ('C', 'A'): 21.0, ('E', 'B'): 21.0, ('C', 'B'): 30.0, ('D', 'C'): 28.0, ('C', 'E'): 39.0}
-    #print D
-    print  L
-    #L = [('B', 'A'), ('C', 'A'), ('C', 'B'), ('D', 'A'), ('D', 'B'), ('D', 'C'), ('E', 'A'), ('E', 'B'), ('E', 'C'), ('E', 'D')]
-    print L
-    #Benny create an empty dict
     node_dict = dict()
-  
-    counter = 0
-    while L:
-        counter += 1
-        #if debug:
-        #    print '\nround', counter
-        L,t = one_round(L,D,node_dict,debug=debug)
-        print 'L', L, 't', t  
+
+    while list_of_compared_seqs:
+        list_of_compared_seqs = one_round(list_of_compared_seqs, dictionary_of_seq_compare_scores, node_dict)
+        print 'list_of_compared_seqs', list_of_compared_seqs
     
-    #if debug:
-    #    print t, '\n'
-    #    for k in node_dict:
-    #        print k, node_dict[k]
     return node_dict   
 
-def join_labels(labels):
-   
-    #print 'nummmmmmmm', num
-    # Join the labels in the first index
-    labels[a] = "(" + labels[a] + "," + labels[b] + ':'")"
-    #print labels
-    # Remove the (now redundant) label in the second index
-    del labels[b]
 
-
-    # Return the x, y co-ordinate of cell
-    return x, y
-
-#-----------------------------------------------
-if __name__ == '__main__':
-    #fn = 'upgma_data.txt'
-    #fn = 'upgma_Sarich_data.txt'
-    node_dict = run(fn,debug=True)
+    '''
+def UPGMA(dictionary_of_seq_compare_scores, list_of_compared_seqs):
     
-
+    node_dict = run(dictionary_of_seq_compare_scores, list_of_compared_seqs)
     
-    print '***'
-    def f(k):  return len(k)
-    
-    L = sorted(node_dict.keys(),key=f)
-    print "lllllllll", L
-    for k in L[0:]:
-        print k,
-    print
-    print node_dict
-    print 'please', listlistlist
-    
-   # for i in listlistlist:
-        #x = join_labels(i)
-    #    print 'xxx', x
-        
+    return node_dict
+   '''
+    '''   
     print listlistlist[0][0] + listlistlist[0][1] + "=" + "(" + listlistlist[0][0] + ":" + str(node_dict[listlistlist[0][0]]['up']) + ','+ listlistlist[0][1] + ":" + str(node_dict[listlistlist[0][1]]['up']) + ")"
     print listlistlist[0][1] + listlistlist[0][0] + "=" + "(" + listlistlist[0][0] + ":" + str(node_dict[listlistlist[0][0]]['up']) + ','+ listlistlist[0][1] + ":" + str(node_dict[listlistlist[0][1]]['up']) + ")"
     
@@ -212,12 +142,7 @@ if __name__ == '__main__':
     
     print listlistlist[3][1] + listlistlist[3][0] + "=" + "(" + listlistlist[3][0] + ":" + str(node_dict[listlistlist[3][0]]['up']) + ','+ listlistlist[3][1] + ":" + str(node_dict[listlistlist[3][1]]['up']) + ")"
     print listlistlist[3][0] + listlistlist[3][1] + "=" + "(" + listlistlist[3][0] + ":" + str(node_dict[listlistlist[3][0]]['up']) + ','+ listlistlist[3][1] + ":" + str(node_dict[listlistlist[3][1]]['up']) + ")"
-    
-    
-    
-    
-    print node_dict['ABCDE']
-    #labels[a] = "(" + labels[a] +  "," + labels[b] +  ")"
+    '''
     
     
     
